@@ -16,7 +16,9 @@
 			elementFactory: elementFactory,
 			values: [],
 			unique: false,
-			repeat: true
+			repeat: true,
+			onFilterChanged: undefined,
+			preload: false
 		};
 
 	function Plugin(element, options) {
@@ -43,7 +45,13 @@
 	Plugin.KEYS = [40, 38, 13, 27, 9];
 
 	Plugin.prototype.init = function () {
-		if(this.options.values.length < 1) return;
+		if (this.options.values.length < 1 && !this.options.onFilterChanged) {
+			return;
+		}
+
+		if (this.options.preload && this.options.onFilterChanged) {
+			this.options.onFilterChanged(this, this.options.token, "");
+		}
 
 		this.$element
 									.bind('keyup', $.proxy(this.onKeyUp, this))
@@ -62,6 +70,29 @@
 		this.dontFilter = false;
 		this.lastFilter = undefined;
 		this.filtered = this.options.values.slice(0);
+	};
+
+	Plugin.prototype.setValues = function (values) {
+		this.options.values = values;
+
+		var listVisible = this.$itemList.is(":visible");
+		this.reset();
+
+		if (values.length > 0) {
+			if (!listVisible) {
+				this.displayList();
+			}
+
+			var filter = this.lastFilter;
+			if (!filter) {
+				filter = "";
+			}
+			this.lastFilter = "\n";
+			this.filterList(filter);
+		}
+		else {
+			this.hideList();
+		}
 	};
 
 	Plugin.prototype.next = function () {
@@ -104,6 +135,10 @@
 	};
 
 	Plugin.prototype.hightlightItem = function () {
+		if (this.filtered.length === 0) {
+			return;
+		}
+
 		this.$itemList.find(".-sew-list-item").removeClass("selected");
 
 		var container = this.$itemList.find(".-sew-list-item").parent();
@@ -154,7 +189,6 @@
 		this.lastFilter = val;
 		this.$itemList.find(".-sew-list-item").remove();
 		var values = this.options.values;
-
 
 		var vals = this.filtered = values.filter($.proxy(function (e) {
 			var exp = new RegExp('\\W*' + this.options.token + e.val + '(\\W|$)');
@@ -209,6 +243,12 @@
 			this.dontFilter = false;
 			this.hideList();
 			return;
+		}
+
+		if (matches && this.options.onFilterChanged) {
+			if (this.options.onFilterChanged) {
+				this.options.onFilterChanged(this, this.options.token, matches[2]);
+			}
 		}
 
 		if(matches && !this.matched) {

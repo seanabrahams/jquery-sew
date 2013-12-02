@@ -10,7 +10,7 @@
         <h3>enable auto-complete by typing @ </h3>
         <div>
         	<h4> Works on any textarea/input element from your document </h4>
-					<textarea style="width:415px; resize:none;"></textarea>
+					<textarea class="text-area" style="width:415px; resize:none;"></textarea>
 
 					<h5> Supports unique elements </h5>
 					<input type="text" style="width:415px; resize:none;" />
@@ -20,6 +20,9 @@
 
 					<h5> Prevent repetition </h5>
 					<div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
+
+          <h5> AJAX data sources </h5>
+          <textarea class="ajax" style="width: 415px; height: 100px; border: 1px solid #888"></textarea>
 				</div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -48,7 +51,7 @@
 				};
 
 				// here is how we use it
-				$('textarea').sew({values: values, elementFactory: elementFactory});
+				$('.text-area').sew({values: values, elementFactory: elementFactory});
 
 
 				// with repetition but unique flag
@@ -58,6 +61,27 @@
 				$('.editable').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
 				$('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
 				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
+        $(".ajax").sew({
+          elementFactory: elementFactory,
+          onFilterChanged: function(sew, token, expression) {
+            $.ajax({
+              url: "https://api.github.com/legacy/repos/search/" + encodeURIComponent(expression),
+              type: "GET",
+              success: function(result) {
+                var newValues = [];
+
+                for (var i = 0; i < Math.min(10, result.repositories.length); i++) {
+                  var repo = result.repositories[i];
+                  newValues.push({
+                    val: repo.name,
+                    meta: repo.owner
+                  })
+                }
+                sew.setValues(newValues);
+              }
+            });
+          }
+        })
 			});
 		</script>
     </body>
