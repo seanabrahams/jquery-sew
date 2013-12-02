@@ -6,7 +6,7 @@
 
 (function ($, window, undefined) {
 	// Create the defaults once
-	var elementFactory = function (element, value) {
+	var elementFactory = function (element, value, token) {
 		element.text(value.val);
 	};
 
@@ -25,14 +25,19 @@
 		this.element = element;
 		this.$element = $(element);
 		this.$itemList = $(Plugin.MENU_TEMPLATE);
+		this.currentToken = undefined;
 
 		this.options = $.extend({}, defaults, options);
+		if (!$.isArray(this.options.token)) {
+			this.options.token = [this.options.token];
+		}
 		this.reset();
 
 		this._defaults = defaults;
 		this._name = pluginName;
 
-		this.expression = new RegExp('(^|\\b|\\s)' + this.options.token + '([\\w.]*)$');
+		var tokens = this.options.token.join("");
+		this.expression = new RegExp('(^|\\b|\\s)([' + tokens + '])([\\w.]*)$');
 		this.cleanupHandle = null;
 
 		this.init();
@@ -50,7 +55,7 @@
 		}
 
 		if (this.options.preload && this.options.onFilterChanged) {
-			this.options.onFilterChanged(this, this.options.token, "");
+			this.options.onFilterChanged(this);
 		}
 
 		this.$element
@@ -124,7 +129,7 @@
 
 		var fullStuff = this.getText();
 		var val = fullStuff.substring(0, startpos);
-		val = val.replace(this.expression, '$1' + this.options.token + replacement);
+		val = val.replace(this.expression, '$1' + '$2' + replacement);
 
 		var posfix = fullStuff.substring(startpos, fullStuff.length);
 		var separator = posfix.match(/^\s/) ? '' : ' ';
@@ -149,13 +154,15 @@
 	};
 
 	Plugin.prototype.renderElements = function (values) {
+		window.sew = this;
+
 		$("body").append(this.$itemList);
 
 		var container = this.$itemList.find('ul').empty();
 		values.forEach($.proxy(function (e, i) {
 			var $item = $(Plugin.ITEM_TEMPLATE);
 
-			this.options.elementFactory($item, e);
+			this.options.elementFactory($item, e, this.currentToken);
 
 			e.element = $item.appendTo(container).bind('click', $.proxy(this.onItemClick, this, e)).bind('mouseover', $.proxy(this.onItemHover, this, i));
 		}, this));
@@ -245,20 +252,31 @@
 			return;
 		}
 
-		if (matches && this.options.onFilterChanged) {
-			if (this.options.onFilterChanged) {
-				this.options.onFilterChanged(this, this.options.token, matches[2]);
+		if (matches) {
+			if (this.currentToken != matches[2] && this.currentToken) {
+				this.currentToken = matches[2];
+
+				if (this.options.onFilterChanged) {
+					this.options.values = [];
+					this.reset();
+				}
 			}
-		}
 
-		if(matches && !this.matched) {
-			this.displayList();
-			this.lastFilter = "\n";
-			this.matched = true;
-		}
+			if (this.options.onFilterChanged) {
+				if (this.options.onFilterChanged) {
+					this.options.onFilterChanged(this, matches[3], matches[2]);
+				}
+			}
 
-		if(matches && !this.dontFilter) {
-			this.filterList(matches[2]);
+			if (!this.matched) {
+				this.displayList();
+				this.lastFilter = "\n";
+				this.matched = true;
+			}
+
+			if (!this.dontFilter) {
+				this.filterList(matches[3]);
+			}
 		}
 	};
 

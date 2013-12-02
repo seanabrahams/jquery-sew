@@ -22,6 +22,7 @@
 					<div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
 
           <h5> AJAX data sources </h5>
+          <div><small>This data uses the Github API which may stop working if too many requests are made</small></div>
           <textarea class="ajax" style="width: 415px; height: 100px; border: 1px solid #888"></textarea>
 				</div>
 
@@ -42,7 +43,13 @@
 
 				var customItemTemplate = "<div><span />&nbsp;<small /></div>";
 
-				function elementFactory(element, e) {
+				function elementFactory(element, e, token) {
+          if (token == "#") {
+            // Tags don't need a template
+            element.text(e.val);
+            return;
+          }
+
 					var template = $(customItemTemplate).find('span')
 															.text('@' + e.val).end()
 												   		.find('small')
@@ -63,23 +70,32 @@
 				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
         $(".ajax").sew({
           elementFactory: elementFactory,
-          onFilterChanged: function(sew, token, expression) {
-            $.ajax({
-              url: "https://api.github.com/legacy/repos/search/" + encodeURIComponent(expression),
-              type: "GET",
-              success: function(result) {
-                var newValues = [];
+          token: ["@", "#"],
+          onFilterChanged: function(sew, expression, token) {
+            if (token == "@" && expression.length > 0) {
+              $.ajax({
+                url: "https://api.github.com/legacy/repos/search/" + encodeURIComponent(expression),
+                type: "GET",
+                success: function(result) {
+                  var newValues = [];
 
-                for (var i = 0; i < Math.min(10, result.repositories.length); i++) {
-                  var repo = result.repositories[i];
-                  newValues.push({
-                    val: repo.name,
-                    meta: repo.owner
-                  })
+                  for (var i = 0; i < Math.min(10, result.repositories.length); i++) {
+                    var repo = result.repositories[i];
+                    newValues.push({
+                      val: repo.name,
+                      meta: repo.owner
+                    })
+                  }
+                  sew.setValues(newValues);
                 }
-                sew.setValues(newValues);
-              }
-            });
+              });
+            }
+            else if (token == "#") {
+              sew.setValues([
+                {val: "urgent"},
+                {val: "bug"},
+                {val: "feature"}])
+            }
           }
         })
 			});
