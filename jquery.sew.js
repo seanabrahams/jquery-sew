@@ -253,6 +253,8 @@
 		}
 
 		if (matches) {
+			this.currentToken = matches[2];
+
 			if (this.currentToken != matches[2] && this.currentToken) {
 				this.currentToken = matches[2];
 
