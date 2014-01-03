@@ -9,65 +9,65 @@
         <h1>Hello world! jquery-sew demo.</h1>
         <h3>enable auto-complete by typing @ </h3>
         <div>
-        	<h4> Works on any textarea/input element from your document </h4>
-					<textarea class="text-area" style="width:415px; resize:none;"></textarea>
+          <h4> Works on any textarea/input element from your document </h4>
+          <textarea class="text-area" style="width:415px; resize:none;"></textarea>
 
-					<h5> Supports unique elements </h5>
-					<input type="text" style="width:415px; resize:none;" />
+          <h5> Supports unique elements </h5>
+          <input type="text" style="width:415px; resize:none;" />
 
-					<h5> Supports content editable elements</h5>
-					<div class="editable" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
+          <h5> Supports content editable elements</h5>
+          <div class="editable" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
 
-					<h5> Prevent repetition </h5>
-					<div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
+          <h5> Prevent repetition </h5>
+          <div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
 
           <h5> AJAX data sources </h5>
           <div><small>This data uses the Github API which may stop working if too many requests are made</small></div>
           <textarea class="ajax" style="width: 415px; height: 100px; border: 1px solid #888"></textarea>
-				</div>
+        </div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="../jquery.caretposition.js"></script>
-				<script type="text/javascript" src="../jquery.sew.js"></script>
-		<script>
-			$(document).ready(function() {
-				var values = [{val:'santiagotactivos', meta:'Santiago Montero'},
-							  {val:'johnnyhalife', meta:'Johnny Halife'},
-							  {val:'arielflesler', meta:'Ariel Flesler'},
-							  {val:'rbajales', meta:'Raul Bajales'}];
+        <script type="text/javascript" src="../jquery.sew.js"></script>
+    <script>
+      $(document).ready(function() {
+        var values = [{val:'santiagotactivos', meta:'Santiago Montero'},
+                {val:'johnnyhalife', meta:'Johnny Halife'},
+                {val:'arielflesler', meta:'Ariel Flesler'},
+                {val:'rbajales', meta:'Raul Bajales'}];
 
-				for (var i = 0; i < 10; i++) {
-					values.push({val: 'johnnyhalife' + i})
-				};
+        for (var i = 0; i < 10; i++) {
+          values.push({val: 'johnnyhalife' + i})
+        };
 
 
-				var customItemTemplate = "<div><span />&nbsp;<small /></div>";
+        var customItemTemplate = "<div><span />&nbsp;<small /></div>";
 
-				function elementFactory(element, e, token) {
+        function elementFactory(element, e, token) {
           if (token == "#") {
             // Tags don't need a template
             element.text(e.val);
             return;
           }
 
-					var template = $(customItemTemplate).find('span')
-															.text('@' + e.val).end()
-												   		.find('small')
-															.text("(" + (e.meta || e.val) + ")").end();
-					element.append(template);
-				};
+          var template = $(customItemTemplate).find('span')
+                              .text('@' + e.val).end()
+                              .find('small')
+                              .text("(" + (e.meta || e.val) + ")").end();
+          element.append(template);
+        };
 
-				// here is how we use it
-				$('.text-area').sew({values: values, elementFactory: elementFactory});
+        // here is how we use it
+        $('.text-area').sew({values: values, elementFactory: elementFactory});
 
 
-				// with repetition but unique flag
-				var repeatedElements = [{val: 'johnny'}, {val: 'chanta'}, {val: 'chanta'}, {val: 'chanta'}];
-				$('input').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
+        // with repetition but unique flag
+        var repeatedElements = [{val: 'johnny'}, {val: 'chanta'}, {val: 'chanta'}, {val: 'chanta'}];
+        $('input').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
 
-				$('.editable').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
-				$('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
-				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
+        $('.editable').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
+        $('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
+        $('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
         $(".ajax").sew({
           elementFactory: elementFactory,
           token: ["@", "#"],
@@ -98,7 +98,7 @@
             }
           }
         })
-			});
-		</script>
+      });
+    </script>
     </body>
 </html>
