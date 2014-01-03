@@ -265,9 +265,7 @@
       }
 
       if (this.options.onFilterChanged) {
-        if (this.options.onFilterChanged) {
-          this.options.onFilterChanged(this, matches[3], matches[2]);
-        }
+        this.options.onFilterChanged(this, matches[3], matches[2]);
       }
 
       if (!this.matched) {
