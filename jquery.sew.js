@@ -248,14 +248,12 @@
     var val = this.getText().substring(0, startpos);
     var matches = val.match(this.expression);
 
-    if(!matches && this.matched) {
+    if(!matches) {
       this.matched = false;
       this.dontFilter = false;
       this.hideList();
       return;
-    }
-
-    if (matches) {
+    } else {
       this.currentToken = matches[2];
 
       // Reset the shown values if the user has switched to a different token
