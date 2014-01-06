@@ -47,6 +47,7 @@
 
   Plugin.ITEM_TEMPLATE = '<li class="-sew-list-item"></li>';
 
+  // Down arrow, up arrow, enter, esc, tab
   Plugin.KEYS = [40, 38, 13, 27, 9];
 
   Plugin.prototype.init = function () {
@@ -255,6 +256,7 @@
     if (matches) {
       this.currentToken = matches[2];
 
+      // Reset the shown values if the user has switched to a different token
       if (this.currentToken != matches[2] && this.currentToken) {
         this.currentToken = matches[2];
 
