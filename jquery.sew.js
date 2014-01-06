@@ -203,9 +203,9 @@
         return false;
       }
 
-      return  val === "" ||
-              e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
-              (e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
+      return val === "" ||
+             e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
+             (e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
     }, this));
 
     if(vals.length) {
