@@ -60,10 +60,10 @@
     }
 
     this.$element
-                  .bind('keyup', $.proxy(this.onKeyUp, this))
-                  .bind('keydown', $.proxy(this.onKeyDown, this))
-                  .bind('focus', $.proxy(this.renderElements, this, this.options.values))
-                  .bind('blur', $.proxy(this.remove, this));
+      .unbind('keyup.jquery-sew').bind('keyup.jquery-sew', $.proxy(this.onKeyUp, this))
+      .unbind('keydown.jquery-sew').bind('keydown.jquery-sew', $.proxy(this.onKeyDown, this))
+      .unbind('focus.jquery-sew').bind('focus.jquery-sew', $.proxy(this.renderElements, this, this.options.values))
+      .unbind('blur.jquery-sew').bind('blur.jquery-sew', $.proxy(this.remove, this));
   };
 
   Plugin.prototype.reset = function () {
