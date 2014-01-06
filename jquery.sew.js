@@ -242,6 +242,8 @@
   };
 
   Plugin.prototype.onKeyUp = function (e) {
+    if (Plugin.KEYS.indexOf(e.keyCode) > -1) return;
+
     var startpos = this.$element.getCursorPosition();
     var val = this.getText().substring(0, startpos);
     var matches = val.match(this.expression);
