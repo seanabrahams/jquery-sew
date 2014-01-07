@@ -138,7 +138,6 @@
 
     var finalFight = val + separator + posfix;
     this.setText(finalFight);
-    this.$element.setCursorPosition(val.length + 1);
   };
 
   Plugin.prototype.hightlightItem = function () {
