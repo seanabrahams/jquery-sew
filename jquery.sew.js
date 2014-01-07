@@ -62,6 +62,7 @@
     this.$element
       .unbind('keyup.jquery-sew').bind('keyup.jquery-sew', $.proxy(this.onKeyUp, this))
       .unbind('keydown.jquery-sew').bind('keydown.jquery-sew', $.proxy(this.onKeyDown, this))
+      .unbind('keypress.jquery-sew').bind('keypress.jquery-sew', $.proxy(this.onKeyPress, this))
       .unbind('focus.jquery-sew').bind('focus.jquery-sew', $.proxy(this.renderElements, this, this.options.values))
       .unbind('blur.jquery-sew').bind('blur.jquery-sew', $.proxy(this.remove, this));
   };
@@ -304,6 +305,17 @@
     }
 
     e.preventDefault();
+  };
+
+  Plugin.prototype.onKeyPress = function (e) {
+    switch(e.keyCode) {
+      case 13:
+        if (this.$itemList.is(":visible")) {
+          e.preventDefault();
+          this.hideList();
+        }
+        break;
+    }
   };
 
   Plugin.prototype.onItemClick = function (element, e) {
